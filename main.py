@@ -106,7 +106,7 @@ if predict_button:
                 st.warning("The water is **Not Drinkable**. It is recommended not to consume.")
             else:
                 st.success("Congratulations! The water is **Drinkable**. It is safe for consumption.")
-            st.baloons()
+            st.balloons()
             # Additional informative messages
             st.markdown("---")
             st.info("This prediction is based on a machine learning model trained on water potability data.")
