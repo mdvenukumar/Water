@@ -106,7 +106,7 @@ if predict_button:
                 st.warning("The water is **Not Drinkable**. It is recommended not to consume.")
             else:
                 st.success("Congratulations! The water is **Drinkable**. It is safe for consumption.")
-
+            st.baloons()
             # Additional informative messages
             st.markdown("---")
             st.info("This prediction is based on a machine learning model trained on water potability data.")
@@ -124,22 +124,4 @@ if predict_button:
             for feature, importance in feature_importances.head(5).iterrows():
                 st.write(f"- **{feature}:** {importance['Importance']:.4f}")
 
-            # Visualize user input on a radar chart
-            st.subheader("User Input Visualization:")
-            user_input_df = pd.DataFrame({
-                'Feature': user_data.columns,
-                'Value': user_data.values.flatten()
-            })
 
-            fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-            categories = user_input_df['Feature']
-            values = user_input_df['Value'].tolist()
-
-            # Duplicate the first value to close the circular plot
-            values += values[:1]
-
-            ax.fill_between(x=categories, y1=values, alpha=0.5)
-            ax.set_theta_offset(pi / 2)
-            ax.set_theta_direction(-1)
-
-            st.pyplot(fig)
