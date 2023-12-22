@@ -4,7 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
-
+import matplotlib.pyplot as plt
+from math import pi
 
 # Load the pre-trained model and imputer
 rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
@@ -40,15 +41,15 @@ st.title("Water Potability Prediction App")
 # Create a form using st.form
 with st.form("input_form"):
     st.header("User Input")
-    ph = st.number_input("Enter pH:", placeholder="")
-    hardness = st.number_input("Enter Hardness:")
-    solids = st.number_input("Enter Solids:")
-    chloramines = st.number_input("Enter Chloramines:")
-    sulfate = st.number_input("Enter Sulfate:")
-    conductivity = st.number_input("Enter Conductivity:")
-    organic_carbon = st.number_input("Enter Organic Carbon:")
-    trihalomethanes = st.number_input("Enter Trihalomethanes:")
-    turbidity = st.number_input("Enter Turbidity:")
+    ph = st.text_input("Enter pH:")
+    hardness = st.text_input("Enter Hardness:")
+    solids = st.text_input("Enter Solids:")
+    chloramines = st.text_input("Enter Chloramines:")
+    sulfate = st.text_input("Enter Sulfate:")
+    conductivity = st.text_input("Enter Conductivity:")
+    organic_carbon = st.text_input("Enter Organic Carbon:")
+    trihalomethanes = st.text_input("Enter Trihalomethanes:")
+    turbidity = st.text_input("Enter Turbidity:")
 
     # Add a "Predict" button to the form
     predict_button = st.form_submit_button("Predict")
@@ -56,6 +57,19 @@ with st.form("input_form"):
 # Process the form only when the "Predict" button is clicked
 if predict_button:
     # Validate user input
+    try:
+        ph = float(ph)
+        hardness = float(hardness)
+        solids = float(solids)
+        chloramines = float(chloramines)
+        sulfate = float(sulfate)
+        conductivity = float(conductivity)
+        organic_carbon = float(organic_carbon)
+        trihalomethanes = float(trihalomethanes)
+        turbidity = float(turbidity)
+    except ValueError:
+        st.error("Please enter valid numerical values.")
+
     if not (0.0 <= ph <= 14.0) or not (47.4 <= hardness <= 323) or not (321 <= solids <= 61200) \
             or not (0.35 <= chloramines <= 13.1) or not (129 <= sulfate <= 481) \
             or not (181 <= conductivity <= 753) or not (2.2 <= organic_carbon <= 28.3) \
@@ -97,11 +111,35 @@ if predict_button:
             st.markdown("---")
             st.info("This prediction is based on a machine learning model trained on water potability data.")
             st.info("Please note that this is a simplified model and may not cover all aspects of water quality.")
-hide_streamlit_style = """
-            <style>
-            [data-testid="stToolbar"] {visibility: hidden !important;}
-            footer {visibility: hidden !important;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-            
+
+            # Display feature importances
+            feature_importances = pd.DataFrame(rf_model.feature_importances_, index=X.columns, columns=['Importance'])
+            feature_importances = feature_importances.sort_values(by='Importance', ascending=False)
+
+            st.subheader("Top Features Contributing to Prediction:")
+            st.bar_chart(feature_importances.head(5))  # Display the top 5 features
+
+            # Provide additional text explanations for the top features
+            st.write("The top features contributing to the prediction are:")
+            for feature, importance in feature_importances.head(5).iterrows():
+                st.write(f"- **{feature}:** {importance['Importance']:.4f}")
+
+            # Visualize user input on a radar chart
+            st.subheader("User Input Visualization:")
+            user_input_df = pd.DataFrame({
+                'Feature': user_data.columns,
+                'Value': user_data.values.flatten()
+            })
+
+            fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+            categories = user_input_df['Feature']
+            values = user_input_df['Value'].tolist()
+
+            # Duplicate the first value to close the circular plot
+            values += values[:1]
+
+            ax.fill_between(x=categories, y1=values, alpha=0.5)
+            ax.set_theta_offset(pi / 2)
+            ax.set_theta_direction(-1)
+
+            st.pyplot(fig)
