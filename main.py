@@ -36,7 +36,7 @@ X_resampled, y_resampled = smote.fit_resample(X_scaled, y)
 rf_model.fit(X_resampled, y_resampled)
 
 # Streamlit App
-st.title("Water Potability Prediction App")
+st.title("Water Potability Prediction")
 
 # Create a form using st.form
 with st.form("input_form"):
@@ -109,8 +109,7 @@ if predict_button:
             st.balloons()
             # Additional informative messages
             st.markdown("---")
-            st.info("This prediction is based on a machine learning model trained on water potability data.")
-            st.info("Please note that this is a simplified model and may not cover all aspects of water quality.")
+           
 
             # Display feature importances
             feature_importances = pd.DataFrame(rf_model.feature_importances_, index=X.columns, columns=['Importance'])
