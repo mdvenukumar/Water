@@ -70,11 +70,7 @@ if predict_button:
     except ValueError:
         st.error("Please enter valid numerical values.")
 
-    if not (0.0 <= ph <= 14.0) or not (47.4 <= hardness <= 323) or not (321 <= solids <= 61200) \
-            or not (0.35 <= chloramines <= 13.1) or not (129 <= sulfate <= 481) \
-            or not (181 <= conductivity <= 753) or not (2.2 <= organic_carbon <= 28.3) \
-            or not (0.74 <= trihalomethanes <= 124) or not (1.45 <= turbidity <= 6.74):
-        st.error("Please enter valid values within the specified ranges.")
+    
     else:
         # Make predictions with a loading spinner
         with st.spinner("Predicting..."):
